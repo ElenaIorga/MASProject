@@ -185,7 +185,7 @@ namespace Reactive
             if (_pathToFinish.Count > 0)
             {
                 string nextPosition = _pathToFinish.First();
-                _pathToFinish.RemoveAt(0);
+                //_pathToFinish.RemoveAt(0);
                 Send("planet", Utils.Str("try_to_move", nextPosition));
             }
             else
@@ -420,8 +420,8 @@ namespace Reactive
 
                 if (_pathToFinish.Count > 0)
                 {
-                    _pathToFinish.RemoveAt(0);
                     string nextPosition = _pathToFinish.First();
+                    _pathToFinish.RemoveAt(0);
                     Send("planet", Utils.Str("try_to_move", nextPosition));
                 }
                 else
