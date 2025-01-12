@@ -13,68 +13,70 @@ namespace Reactive
 
         public static int[,] GetMatrix(int rows, int columns)
         {
-            int[,] maze = new int[rows, columns];
-            for (int i = 0; i < rows; i++)
-                for (int j = 0; j < columns; j++)
-                    maze[i, j] = 1;
+            /*            int[,] maze = new int[rows, columns];
+                        for (int i = 0; i < rows; i++)
+                            for (int j = 0; j < columns; j++)
+                                maze[i, j] = 1;
 
-            Random random = new Random();
-            Point start = new Point((int)(random.NextDouble() * rows), (int)(random.NextDouble() * columns), null);
-            maze[start.r, start.c] = 2;
-            StartPosition = Utils.Str(start.r, start.c);
+                        Random random = new Random();
+                        Point start = new Point((int)(random.NextDouble() * rows), (int)(random.NextDouble() * columns), null);
+                        maze[start.r, start.c] = 2;
+                        StartPosition = Utils.Str(start.r, start.c);
 
-            SortedList<int, Point> initial = new SortedList<int, Point>();
-            SortedList<int, Point> frontier = GetFrontier(maze, start, initial);
+                        SortedList<int, Point> initial = new SortedList<int, Point>();
+                        SortedList<int, Point> frontier = GetFrontier(maze, start, initial);
 
-            Point last = null;
+                        Point last = null;
 
-            while (frontier.Count > 0)
-            {
-                var smallest = frontier.First();
-                frontier.RemoveAt(0); // Remove the cell with the smallest priority
-                Point current = smallest.Value;
-
-                Point opposite = current.opposite();
-                try
-                {
-                    if (maze[current.r, current.c] == 1 && maze[opposite.r, opposite.c] == 1)
-                    {
-                        maze[current.r, current.c] = 0;
-                        maze[opposite.r, opposite.c] = 0;
-                        last = opposite;
-
-                        // Get new frontier cells and add them to the existing frontier
-                        SortedList<int, Point> newFrontier = GetFrontier(maze, opposite, frontier);
-
-                        foreach (var newCell in newFrontier)
+                        while (frontier.Count > 0)
                         {
-                            // Add new cells to the frontier (avoids duplicates)
-                            frontier.Add(newCell.Key, newCell.Value);
-                        }
-                    }
-                }
-                catch (Exception) { }
+                            var smallest = frontier.First();
+                            frontier.RemoveAt(0); // Remove the cell with the smallest priority
+                            Point current = smallest.Value;
 
-                if (frontier.Count == 0)
-                {
-                    maze[last.r, last.c] = 3; // Mark the exit
-                    StopPosition = Utils.Str(last.r, last.c);
-                }
-            }
-            return maze;
+                            Point opposite = current.opposite();
+                            try
+                            {
+                                if (maze[current.r, current.c] == 1 && maze[opposite.r, opposite.c] == 1)
+                                {
+                                    maze[current.r, current.c] = 0;
+                                    maze[opposite.r, opposite.c] = 0;
+                                    last = opposite;
+
+                                    // Get new frontier cells and add them to the existing frontier
+                                    SortedList<int, Point> newFrontier = GetFrontier(maze, opposite, frontier);
+
+                                    foreach (var newCell in newFrontier)
+                                    {
+                                        // Add new cells to the frontier (avoids duplicates)
+                                        frontier.Add(newCell.Key, newCell.Value);
+                                    }
+                                }
+                            }
+                            catch (Exception) { }
+
+                            if (frontier.Count == 0)
+                            {
+                                maze[last.r, last.c] = 3; // Mark the exit
+                                StopPosition = Utils.Str(last.r, last.c);
+                            }
+                        }
+                        return maze;*/
 
             //return maze;
-            /*    StartPosition = Utils.Str(5, 0);
-                StopPosition = Utils.Str(0, 4);
-                return new int[6, 6]
-           {
-                  { 1, 0, 0, 0, 3, 0 },
-                 { 1, 0, 1, 1, 1, 1 },
-                 { 1, 0, 0, 0 ,0, 1 },
-                 { 1, 0, 1, 1,1, 1 },
-                 { 0, 0, 1, 1, 1, 1 },
-                 { 2, 0, 0, 0, 1, 1 }
-           };*/
+            StartPosition = Utils.Str(4, 4);
+            StopPosition = Utils.Str(2, 2);
+            return  new int[8, 8]
+{
+    { 0, 0, 0, 0, 0, 1, 1, 1 },
+    { 0, 1, 1, 1, 0, 1, 1, 1 },
+    { 0, 0, 3, 1, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 0, 1, 1, 1 },
+    { 0, 0, 0, 0, 2, 0, 0, 1 },
+    { 0, 1, 1, 1, 1, 1, 0, 1 },
+    { 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1 }
+};
         }
 
         /* private static SortedList<int, Point> GetFrontier(int[,] maze, Point start)

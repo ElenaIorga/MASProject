@@ -6,7 +6,7 @@ namespace Reactive
 {
     public class Utils
     {
-        public static int Size = 20;
+        public static int Size = 8;
         public static int NoExplorers = 2;
         public static int NoResources = 10;
         public static int[,] Maze = MazeGenerator.GetMatrix(Size, Size);

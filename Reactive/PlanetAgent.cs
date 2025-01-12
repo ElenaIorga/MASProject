@@ -101,7 +101,7 @@ namespace Reactive
                 }
             }
 
-            Console.WriteLine("{0}: Left to spawn: {1}", Name, numberOfAvailable);
+            Console.WriteLine("{0}: dormant agents: {1}", Name, numberOfAvailable);
 
             if (numberOfAvailable > 0)
             {
@@ -184,13 +184,13 @@ namespace Reactive
                 ExplorerStates[sender] = ExplorerAgentState.Dead;
                 ExplorerPositions.Remove(sender);
 
-                Console.WriteLine("Remaining Explorers: {0}", ExplorerPositions.Count);
+                Console.WriteLine("explorer agents left: {0}", ExplorerPositions.Count);
                 if (ExplorerPositions.Count == 0)
                 {
-                    Console.WriteLine("{0}: Stopped", Name);
+                    Console.WriteLine("{0}: stopped", Name);
                     foreach (string agent in Environment.AllAgents())
                     {
-                        Console.WriteLine("Remaining agent: {0}", agent);
+                        Console.WriteLine("agent: {0}", agent);
                     }
                     this.Stop();
                 }

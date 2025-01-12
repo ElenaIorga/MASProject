@@ -229,7 +229,14 @@ namespace Reactive
             {
                 _state = State.Started;
                 _nextDirections = availableDirections;
-                Send(Name, "perform_based_on_state");
+                if (availableDirections.Count == 0)
+                {
+                    Send(Name, "perform_based_on_state_and_position");
+                }
+                else
+                {
+                    Send(Name, "perform_based_on_state");
+                }
             }
         }
 
@@ -356,8 +363,12 @@ namespace Reactive
         {
             int oldX = _currentX;
             int oldY = _currentY;
-            _currentX = int.Parse(parameters[0]);
-            _currentY = int.Parse(parameters[1]);
+
+            if (parameters.Count > 0)
+            {
+                _currentX = int.Parse(parameters[0]);
+                _currentY = int.Parse(parameters[1]);
+            }
 
             if (_state == State.Waiting)
             {
@@ -376,7 +387,7 @@ namespace Reactive
             else if (_state == State.Started)
             {
                 _lastPositions.Add(Utils.Str(oldX, oldY));
-                Position dir = Utils.GetPreviousDirection(oldX, oldY, _currentX, _currentY);
+                Position dir = Utils.GetPreviousDirection(_currentX, _currentY, oldX, oldY);
                 Broadcast(Utils.Str("decrement_explored_position", oldX, oldY, dir), false, "explorers_channel");
                 DecrementExploredPosition(new List<string>() { oldX.ToString(), oldY.ToString(), dir.ToString() });
                 _nextDirections = GetNextDirectionsOrdered(_lastPositions);
@@ -395,6 +406,10 @@ namespace Reactive
             }
             else if (_state == State.Finished)
             {
+                if (_pathToFinish.Count == 0)
+                {
+                    CreatePathToExit(_exitX, _exitY);
+                }
                 _pathToFinish.RemoveAt(0);
                 string nextPosition = _pathToFinish.First();
                 Send("planet", Utils.Str("try_to_move", nextPosition));
@@ -435,6 +450,10 @@ namespace Reactive
                 else if (direction == Position.Down && cell.Right - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Right -= Utils.DecrementValue;
                 else if (direction == Position.Left && cell.Down - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Down -= Utils.DecrementValue;
                 else if (direction == Position.Right && cell.Up - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Up -= Utils.DecrementValue;
+               /* if (direction == Position.Up && cell.Up - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Up -= Utils.DecrementValue;
+                else if (direction == Position.Down && cell.Down - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Down -= Utils.DecrementValue;
+                else if (direction == Position.Left && cell.Left - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Left -= Utils.DecrementValue;
+                else if (direction == Position.Right && cell.Right - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Right -= Utils.DecrementValue;*/
             }
         }
     }

@@ -69,53 +69,22 @@ namespace Reactive
             {
                 for (int j = 0; j < Utils.Size; j++)
                 {
-                    // walls
+                    
                     if (Utils.Maze[i, j] == 1)
                     {
                         g.FillRectangle(Brushes.Black, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
                     }
-                    // start
+                   
                     else if (Utils.Maze[i, j] == 2)
                     {
                         g.FillRectangle(Brushes.Green, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
                     }
-                    // stop
+                 
                     else if (Utils.Maze[i, j] == 3)
                     {
                         g.FillRectangle(Brushes.Red, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
                     }
-                    else if (_ownerAgent?.Current != null)
-                    {
-                        PointF[] pointFs =
-                        {
-                            new PointF(20 + i * cellSize + cellSize/2, 20 + j * cellSize + cellSize/2),
-                            new PointF(20 + i * cellSize + cellSize, 20 + j * cellSize),
-                            new PointF(20 + i * cellSize + cellSize, 20 + j * cellSize + cellSize),
-                            new PointF(20 + i * cellSize, 20 + j * cellSize + cellSize),
-                            new PointF(20 + i * cellSize, 20 + j * cellSize)
-                        };
-
-                        int[,] pointsPositions =
-                        {
-                            {0, 1, 2},
-                            {0, 2, 3},
-                            {0, 3, 4},
-                            {0, 4, 1}
-                        };
-
-                       /* // Split the square in 4 triangles and draw based on the weight.
-                        for (int dir = 0; dir < 4; dir++)
-                        {
-                            int colorAlpha = (int)(255 - _ownerAgent.Current.Weights.Values[i, j, dir] * 255.0);
-                            Color newColor = Color.FromArgb(colorAlpha, Color.Bisque);
-                            PointF[] points = new PointF[3];
-                            points[0] = pointFs[pointsPositions[dir, 0]];
-                            points[1] = pointFs[pointsPositions[dir, 1]];
-                            points[2] = pointFs[pointsPositions[dir, 2]];
-                            g.FillPolygon(new SolidBrush(newColor), points);
-                        }*/
-
-                    }
+                  
 
                 }
                 if (_ownerAgent != null)
@@ -132,15 +101,6 @@ namespace Reactive
                         g.FillEllipse(Brushes.Blue, 20 + x * cellSize + 6, 20 + y * cellSize + 6, cellSize - 12, cellSize - 12);
                     }
                 }
-
-                /*foreach (string v in _ownerAgent.ResourcePositions.Values)
-                {
-                    string[] t = v.Split();
-                    int x = Convert.ToInt32(t[0]);
-                    int y = Convert.ToInt32(t[1]);
-
-                    g.FillRectangle(Brushes.LightGreen, 20 + x * cellSize + 10, 20 + y * cellSize + 10, cellSize - 20, cellSize - 20);
-                }*/
             }
 
             Graphics pbg = pictureBox.CreateGraphics();
