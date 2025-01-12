@@ -135,35 +135,29 @@ namespace Reactive
                     decimal leftDirection = 0;
                     decimal rightDirection = 0;
 
-                    // Continuăm doar dacă celula curentă nu este 1
                     if (flippedMaze[i, j] != 1)
                     {
-                        // Verifică vecinul de sus
                         if (i > 0 && flippedMaze[i - 1, j] != 1)
                         {
                             upDirection = 1;
                         }
 
-                        // Verifică vecinul de jos
                         if (i < Size - 1 && flippedMaze[i + 1, j] != 1)
                         {
                             downDirection = 1;
                         }
 
-                        // Verifică vecinul din stânga
                         if (j > 0 && flippedMaze[i, j - 1] != 1)
                         {
                             leftDirection = 1;
                         }
 
-                        // Verifică vecinul din dreapta
                         if (j < Size - 1 && flippedMaze[i, j + 1] != 1)
                         {
                             rightDirection = 1;
                         }
                     }
 
-                    // Aici poți folosi sau afișa valorile direcțiilor, dacă este necesar.
                     Console.WriteLine($"Cell ({i}, {j}): up = {upDirection}, down = {downDirection}, left = {leftDirection}, right = {rightDirection}");
                
             
