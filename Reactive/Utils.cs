@@ -164,7 +164,7 @@ namespace Reactive
                     }
 
                     // Aici poți folosi sau afișa valorile direcțiilor, dacă este necesar.
-                    //Console.WriteLine($"Cell ({i}, {j}): up = {upDirection}, down = {downDirection}, left = {leftDirection}, right = {rightDirection}");
+                    Console.WriteLine($"Cell ({i}, {j}): up = {upDirection}, down = {downDirection}, left = {leftDirection}, right = {rightDirection}");
                
             
             cells.Add(new Cell()

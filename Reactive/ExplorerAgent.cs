@@ -20,7 +20,7 @@ namespace Reactive
 
         public override void Setup()
         {
-            //Console.WriteLine("Adding " + Name);
+            Console.WriteLine("Adding " + Name);
 
             _currentX = -1;
             _currentY = -1;
@@ -32,7 +32,7 @@ namespace Reactive
 
         public override void Act(Message message)
         {
-            //Console.WriteLine($"\t[{message.Sender} -> {Name}]: {message.Content}");
+            Console.WriteLine($"\t[{message.Sender} -> {Name}]: {message.Content}");
 
             string action;
             List<string> parameters;
@@ -90,7 +90,7 @@ namespace Reactive
             _currentX = int.Parse(parameters[0]);
             _currentY = int.Parse(parameters[1]);
 
-            //Console.WriteLine($"{Name}: Another agent found exit");
+            Console.WriteLine($"{Name}: Another agent found exit");
             this.Stop();
         }
 
@@ -101,7 +101,7 @@ namespace Reactive
 
             Broadcast(Utils.Str("follow_me_to_exit", _currentX, _currentY), false, "explorers_channel");
             
-            //Console.WriteLine($"{Name}: Found the exit");
+            Console.WriteLine($"{Name}: Found the exit");
             this.Stop();
         }
 
@@ -175,7 +175,7 @@ namespace Reactive
             }
             else
             {
-                //Console.WriteLine("No positions to backtrack. Stopping.");
+                Console.WriteLine("No positions to backtrack. Stopping.");
                 this.Stop();
             }
         }
@@ -190,14 +190,14 @@ namespace Reactive
             }
             else
             {
-                //Console.WriteLine("Path to finish is empty. Stopping.");
+                Console.WriteLine("Path to finish is empty. Stopping.");
                 this.Stop();
             }
         }
 
         private void HandleAction()
         {
-            //Console.WriteLine($"Handling action: State = {_state}, Position = {_currentX}, {_currentY}");
+            Console.WriteLine($"Handling action: State = {_state}, Position = {_currentX}, {_currentY}");
             if (_state == State.Started)
             {
                 ExecuteExploringStrategy();
