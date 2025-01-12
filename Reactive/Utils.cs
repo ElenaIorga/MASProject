@@ -182,10 +182,5 @@ namespace Reactive
             return cells;
         }
 
-        public static decimal GetHeuristic(int x1, int y1, int x2, int y2)
-        {
-            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
-        }
-
     }
 }

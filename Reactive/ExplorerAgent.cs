@@ -40,21 +40,6 @@ namespace Reactive
 
             switch (action)
             {
-                case "perform_based_on_state":
-                    HandleAction();
-                    break;
-                case "perform_based_on_state_and_position":
-                    HandleMove(parameters);
-                    break;
-                case "avoid_this_direction":
-                    HandleAvoid(parameters);
-                    break;
-                case "decrement_explored_position":
-                    DecrementExploredPosition(parameters);
-                    break;
-                case "got_stuck":
-                    FixStuck(parameters);
-                    break;
                 case "what_should_i_do":
                     HandleWhatState(message.Sender, parameters);
                     break;
@@ -70,6 +55,22 @@ namespace Reactive
                 case "follow_me_to_exit":
                     HandleCome(parameters);
                     break;
+                case "perform_based_on_state":
+                    HandleAction();
+                    break;
+                case "perform_based_on_state_and_position":
+                    HandleMove(parameters);
+                    break;
+                case "avoid_this_direction":
+                    HandleAvoid(parameters);
+                    break;
+                case "decrement_explored_position":
+                    DecrementExploredPosition(parameters);
+                    break;
+                case "got_stuck":
+                    FixStuck(parameters);
+                    break;
+               
             }
         }
 
