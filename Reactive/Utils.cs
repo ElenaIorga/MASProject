@@ -6,14 +6,14 @@ namespace Reactive
 {
     public class Utils
     {
-        public static int Size = 8;
-        public static int NoExplorers = 2;
+        public static int Size = 15;
+        public static int NoExplorers = 5;
         public static int NoResources = 10;
         public static int[,] Maze = MazeGenerator.GetMatrix(Size, Size);
         public static decimal MinimumThreshold = 0.0000001m;
      
         public static int Delay = 400;
-        public static int SpawnDelay = 2 * Delay;
+        public static int SpawnDelay = 3 * Delay;
         public static Random RandNoGen = new Random();
         public static decimal DecrementValue = 0.00001m;
 
@@ -81,19 +81,19 @@ namespace Reactive
 
             if (dX == -1)
             {
-                return Position.Up;
+                return Position.Down;
             }
             if (dX == 1)
             {
-                return Position.Down;
+                return Position.Up;
             }
             if (dY == -1)
             {
-                return Position.Left;
+                return Position.Right;
             }
             if (dY == 1)
             {
-                return Position.Right;
+                return Position.Left;
             }
 
             return Position.Right;
@@ -135,38 +135,39 @@ namespace Reactive
                     decimal leftDirection = 0;
                     decimal rightDirection = 0;
 
+                    // Continuăm doar dacă celula curentă nu este 1
                     if (flippedMaze[i, j] != 1)
                     {
-                        if (i != 0)
+                        // Verifică vecinul de sus
+                        if (i > 0 && flippedMaze[i - 1, j] != 1)
                         {
-                            if (flippedMaze[i - 1, j] != 1)
-                            {
-                                upDirection = 1;
-                            }
+                            upDirection = 1;
                         }
-                        if (i != Size - 1)
+
+                        // Verifică vecinul de jos
+                        if (i < Size - 1 && flippedMaze[i + 1, j] != 1)
                         {
-                            if (flippedMaze[i + 1, j] != 1)
-                            {
-                                downDirection = 1;
-                            }
+                            downDirection = 1;
                         }
-                        if (j != 0)
+
+                        // Verifică vecinul din stânga
+                        if (j > 0 && flippedMaze[i, j - 1] != 1)
                         {
-                            if (flippedMaze[i, j - 1] != 1)
-                            {
-                                leftDirection = 1;
-                            }
+                            leftDirection = 1;
                         }
-                        if (j != Size - 1)
+
+                        // Verifică vecinul din dreapta
+                        if (j < Size - 1 && flippedMaze[i, j + 1] != 1)
                         {
-                            if (flippedMaze[i, j + 1] != 1)
-                            {
-                                rightDirection = 1;
-                            }
+                            rightDirection = 1;
                         }
                     }
-                    cells.Add(new Cell()
+
+                    // Aici poți folosi sau afișa valorile direcțiilor, dacă este necesar.
+                    //Console.WriteLine($"Cell ({i}, {j}): up = {upDirection}, down = {downDirection}, left = {leftDirection}, right = {rightDirection}");
+               
+            
+            cells.Add(new Cell()
                     {
                         X = i,
                         Y = j,

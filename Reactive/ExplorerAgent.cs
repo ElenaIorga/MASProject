@@ -20,7 +20,7 @@ namespace Reactive
 
         public override void Setup()
         {
-            Console.WriteLine("Adding " + Name);
+            //Console.WriteLine("Adding " + Name);
 
             _currentX = -1;
             _currentY = -1;
@@ -32,7 +32,7 @@ namespace Reactive
 
         public override void Act(Message message)
         {
-            Console.WriteLine($"\t[{message.Sender} -> {Name}]: {message.Content}");
+            //Console.WriteLine($"\t[{message.Sender} -> {Name}]: {message.Content}");
 
             string action;
             List<string> parameters;
@@ -89,7 +89,7 @@ namespace Reactive
             _currentX = int.Parse(parameters[0]);
             _currentY = int.Parse(parameters[1]);
 
-            Console.WriteLine($"{Name}: Another agent found exit");
+            //Console.WriteLine($"{Name}: Another agent found exit");
             this.Stop();
         }
 
@@ -100,7 +100,7 @@ namespace Reactive
 
             Broadcast(Utils.Str("follow_me_to_exit", _currentX, _currentY), false, "explorers_channel");
             
-            Console.WriteLine($"{Name}: Found the exit");
+            //Console.WriteLine($"{Name}: Found the exit");
             this.Stop();
         }
 
@@ -131,7 +131,7 @@ namespace Reactive
             int otherX = int.Parse(parameters[1]);
             int otherY = int.Parse(parameters[2]);
 
-            Position dir = Utils.GetPreviousDirection(_currentX, _currentY, otherX, otherY);
+            Position dir = Utils.GetPreviousDirection(otherX, otherY, _currentX, _currentY);
             Cell currentCell = _agentMap.FirstOrDefault(a => a.X == _currentX && a.Y == _currentY);
 
             if (dir == Position.Up) currentCell.Up = 0;
@@ -174,7 +174,7 @@ namespace Reactive
             }
             else
             {
-                Console.WriteLine("No positions to backtrack. Stopping.");
+                //Console.WriteLine("No positions to backtrack. Stopping.");
                 this.Stop();
             }
         }
@@ -189,14 +189,14 @@ namespace Reactive
             }
             else
             {
-                Console.WriteLine("Path to finish is empty. Stopping.");
+                //Console.WriteLine("Path to finish is empty. Stopping.");
                 this.Stop();
             }
         }
 
         private void HandleAction()
         {
-            Console.WriteLine($"Handling action: State = {_state}, Position = {_currentX}, {_currentY}");
+            //Console.WriteLine($"Handling action: State = {_state}, Position = {_currentX}, {_currentY}");
             if (_state == State.Started)
             {
                 ExecuteExploringStrategy();
@@ -284,20 +284,26 @@ namespace Reactive
 
             List<Position> nextDirections = new List<Position>();
             Cell currentCell = _agentMap.FirstOrDefault(c => c.X == _currentX && c.Y == _currentY);
-            Dictionary<decimal, Position> directionsWithWeights = new Dictionary<decimal, Position>();
+            Dictionary<Position, decimal> directionsWithWeights = new Dictionary<Position, decimal>();
 
+            Console.WriteLine($"----------{Name} is on cell {_currentX},{_currentY}");
             if (currentCell == null) return nextDirections;
 
             if (currentCell.Up > Utils.MinimumThreshold && !exclude.Contains(Utils.Str(_currentX - 1, _currentY)) && !_visitedPositions.Contains(Utils.Str(_currentX - 1, _currentY)))
-                directionsWithWeights[currentCell.Up * 2] = Position.Up;
+                directionsWithWeights[Position.Up] = currentCell.Up;
             if (currentCell.Down > Utils.MinimumThreshold && !exclude.Contains(Utils.Str(_currentX + 1, _currentY)) && !_visitedPositions.Contains(Utils.Str(_currentX + 1, _currentY)))
-                directionsWithWeights[currentCell.Down * 2] = Position.Down;
+                directionsWithWeights[Position.Down] = currentCell.Down;
             if (currentCell.Left > Utils.MinimumThreshold && !exclude.Contains(Utils.Str(_currentX, _currentY - 1)) && !_visitedPositions.Contains(Utils.Str(_currentX, _currentY - 1)))
-                directionsWithWeights[currentCell.Left * 2] = Position.Left;
+                directionsWithWeights[Position.Left] = currentCell.Left;
             if (currentCell.Right > Utils.MinimumThreshold && !exclude.Contains(Utils.Str(_currentX, _currentY + 1)) && !_visitedPositions.Contains(Utils.Str(_currentX, _currentY + 1)))
-                directionsWithWeights[currentCell.Right * 2] = Position.Right;
+                directionsWithWeights[Position.Right] = currentCell.Right;
+            Console.WriteLine($"----------{Name} can go to ");
+            foreach(var x in directionsWithWeights)
+            {
+                Console.WriteLine($"------{x.Key}");
+            }
 
-            nextDirections = directionsWithWeights.OrderByDescending(kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+            nextDirections = directionsWithWeights.OrderBy(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
             return nextDirections;
         }
 
@@ -388,14 +394,14 @@ namespace Reactive
             {
                 _lastPositions.Add(Utils.Str(oldX, oldY));
                 Position dir = Utils.GetPreviousDirection(_currentX, _currentY, oldX, oldY);
-                Broadcast(Utils.Str("decrement_explored_position", oldX, oldY, dir), false, "explorers_channel");
-                DecrementExploredPosition(new List<string>() { oldX.ToString(), oldY.ToString(), dir.ToString() });
+                Broadcast(Utils.Str("decrement_explored_position", oldX, oldY, dir), true, "explorers_channel");
+                //DecrementExploredPosition(new List<string>() { oldX.ToString(), oldY.ToString(), dir.ToString() });
                 _nextDirections = GetNextDirectionsOrdered(_lastPositions);
                 ExecuteExploringStrategy();
             }
             else if (_state == State.Blocked)
             {
-                Position dir = Utils.GetPreviousDirection(_currentX, _currentY, oldX, oldY);
+                Position dir = Utils.GetPreviousDirection(oldX, oldY, _currentX, _currentY);
                 Cell cell = _agentMap.FirstOrDefault(c => c.X == _currentX && c.Y == _currentY);
                 if (dir == Position.Up) cell.Up = 0;
                 else if (dir == Position.Down) cell.Down = 0;
@@ -410,9 +416,17 @@ namespace Reactive
                 {
                     CreatePathToExit(_exitX, _exitY);
                 }
-                _pathToFinish.RemoveAt(0);
-                string nextPosition = _pathToFinish.First();
-                Send("planet", Utils.Str("try_to_move", nextPosition));
+
+                if (_pathToFinish.Count > 0)
+                {
+                    _pathToFinish.RemoveAt(0);
+                    string nextPosition = _pathToFinish.First();
+                    Send("planet", Utils.Str("try_to_move", nextPosition));
+                }
+                else
+                {
+                    var x = 5;
+                }
             }
         }
 
@@ -424,7 +438,7 @@ namespace Reactive
             int avoidY = int.Parse(parameters[1]);
             Position direction = (Position)Enum.Parse(typeof(Position), parameters[2], true);
 
-            Cell cellToAvoidDirection = _agentMap.FirstOrDefault(f => f.X == _currentX && f.Y == _currentY);
+            Cell cellToAvoidDirection = _agentMap.FirstOrDefault(f => f.X == avoidX && f.Y == avoidY);
 
             if (cellToAvoidDirection != null)
             {
@@ -437,24 +451,67 @@ namespace Reactive
 
         private void DecrementExploredPosition(List<string> parameters)
         {
-            if (_state == State.Finished) return;
+            // Log initial method call
+            Console.WriteLine($"DecrementExploredPosition called with parameters: {string.Join(", ", parameters)}");
 
+            // Return immediately if the state is finished
+            if (_state == State.Finished)
+            {
+                Console.WriteLine($"{Name}: State is Finished. No action taken.");
+                return;
+            }
+
+            // Parse the parameters
             int x = int.Parse(parameters[0]);
             int y = int.Parse(parameters[1]);
             Position direction = (Position)Enum.Parse(typeof(Position), parameters[2], true);
 
+            // Log parsed values
+            Console.WriteLine($"{Name}: Parsed values - x: {x}, y: {y}, direction: {direction}");
+
+            // Find the cell in the map
             Cell cell = _agentMap.FirstOrDefault(a => a.X == x && a.Y == y);
+            Console.WriteLine($"{Name}: Searching for cell at position ({x}, {y})");
+
             if (cell != null)
             {
-                if (direction == Position.Up && cell.Left - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Left -= Utils.DecrementValue;
-                else if (direction == Position.Down && cell.Right - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Right -= Utils.DecrementValue;
-                else if (direction == Position.Left && cell.Down - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Down -= Utils.DecrementValue;
-                else if (direction == Position.Right && cell.Up - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Up -= Utils.DecrementValue;
-               /* if (direction == Position.Up && cell.Up - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Up -= Utils.DecrementValue;
-                else if (direction == Position.Down && cell.Down - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Down -= Utils.DecrementValue;
-                else if (direction == Position.Left && cell.Left - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Left -= Utils.DecrementValue;
-                else if (direction == Position.Right && cell.Right - Utils.DecrementValue >= Utils.MinimumThreshold) cell.Right -= Utils.DecrementValue;*/
+                Console.WriteLine($"{Name}: Cell found at ({x}, {y}). Current values - Up: {cell.Up}, Down: {cell.Down}, Left: {cell.Left}, Right: {cell.Right}");
+
+                // Perform the decrement based on direction
+                if (direction == Position.Up && cell.Up - Utils.DecrementValue >= Utils.MinimumThreshold)
+                {
+                    Console.WriteLine($"{Name}: Decrementing Up. Old value: {cell.Up}, Decrement: {Utils.DecrementValue}");
+                    cell.Up -= Utils.DecrementValue;
+                    Console.WriteLine($"{Name}: New Up value: {cell.Up}");
+                }
+                else if (direction == Position.Down && cell.Down - Utils.DecrementValue >= Utils.MinimumThreshold)
+                {
+                    Console.WriteLine($"{Name}: Decrementing Down. Old value: {cell.Down}, Decrement: {Utils.DecrementValue}");
+                    cell.Down -= Utils.DecrementValue;
+                    Console.WriteLine($"{Name}: New Down value: {cell.Down}");
+                }
+                else if (direction == Position.Left && cell.Left - Utils.DecrementValue >= Utils.MinimumThreshold)
+                {
+                    Console.WriteLine($"{Name}: Decrementing Left. Old value: {cell.Left}, Decrement: {Utils.DecrementValue}");
+                    cell.Left -= Utils.DecrementValue;
+                    Console.WriteLine($"{Name}: New Left value: {cell.Left}");
+                }
+                else if (direction == Position.Right && cell.Right - Utils.DecrementValue >= Utils.MinimumThreshold)
+                {
+                    Console.WriteLine($"{Name}: Decrementing Right. Old value: {cell.Right}, Decrement: {Utils.DecrementValue}");
+                    cell.Right -= Utils.DecrementValue;
+                    Console.WriteLine($"{Name}: New Right value: {cell.Right}");
+                }
+                else
+                {
+                    Console.WriteLine($"{Name}: Decrement not performed. Direction: {direction}, Threshold not met.");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{Name}: No cell found at position ({x}, {y}).");
             }
         }
+
     }
 }

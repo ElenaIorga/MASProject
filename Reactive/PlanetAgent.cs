@@ -46,7 +46,7 @@ namespace Reactive
 
         public override void Setup()
         {
-            Console.WriteLine("Starting " + Name);
+            //Console.WriteLine("Starting " + Name);
 
             foreach (ExplorerAgent explorer in ExplorerAgents)
             {
@@ -62,7 +62,7 @@ namespace Reactive
 
         public override void Act(Message message)
         {
-            Console.WriteLine("\t[{1} -> {0}]: {2}", this.Name, message.Sender, message.Content);
+            //Console.WriteLine("\t[{1} -> {0}]: {2}", this.Name, message.Sender, message.Content);
 
             string action; string parameters;
             Utils.ParseMessage(message.Content, out action, out parameters);
@@ -101,7 +101,7 @@ namespace Reactive
                 }
             }
 
-            Console.WriteLine("{0}: dormant agents: {1}", Name, numberOfAvailable);
+            //Console.WriteLine("{0}: dormant agents: {1}", Name, numberOfAvailable);
 
             if (numberOfAvailable > 0)
             {
@@ -184,13 +184,13 @@ namespace Reactive
                 ExplorerStates[sender] = ExplorerAgentState.Dead;
                 ExplorerPositions.Remove(sender);
 
-                Console.WriteLine("explorer agents left: {0}", ExplorerPositions.Count);
+                //Console.WriteLine("explorer agents left: {0}", ExplorerPositions.Count);
                 if (ExplorerPositions.Count == 0)
                 {
-                    Console.WriteLine("{0}: stopped", Name);
+                    //Console.WriteLine("{0}: stopped", Name);
                     foreach (string agent in Environment.AllAgents())
                     {
-                        Console.WriteLine("agent: {0}", agent);
+                        //Console.WriteLine("agent: {0}", agent);
                     }
                     this.Stop();
                 }

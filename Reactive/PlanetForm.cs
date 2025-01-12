@@ -69,37 +69,39 @@ namespace Reactive
             {
                 for (int j = 0; j < Utils.Size; j++)
                 {
-                    
+                    // Draw different cells based on values in the matrix
                     if (Utils.Maze[i, j] == 1)
                     {
-                        g.FillRectangle(Brushes.Black, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
+                        g.FillRectangle(Brushes.Black, 20 + j * cellSize, 20 + i * cellSize, cellSize, cellSize);
                     }
-                   
                     else if (Utils.Maze[i, j] == 2)
                     {
-                        g.FillRectangle(Brushes.Green, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
+                        g.FillRectangle(Brushes.Green, 20 + j * cellSize, 20 + i * cellSize, cellSize, cellSize);
                     }
-                 
                     else if (Utils.Maze[i, j] == 3)
                     {
-                        g.FillRectangle(Brushes.Red, 20 + i * cellSize, 20 + j * cellSize, cellSize, cellSize);
+                        g.FillRectangle(Brushes.Red, 20 + j * cellSize, 20 + i * cellSize, cellSize, cellSize);
                     }
-                  
-
                 }
-                if (_ownerAgent != null)
+            }
+
+            // Draw agents
+            if (_ownerAgent != null)
+            {
+                foreach (string explorer in _ownerAgent.ExplorerPositions.Keys)
                 {
-                    foreach (string explorer in _ownerAgent.ExplorerPositions.Keys)
+                    if (_ownerAgent.ExplorerStates[explorer] != PlanetAgent.ExplorerAgentState.Active)
                     {
-                        if (_ownerAgent.ExplorerStates[explorer] != PlanetAgent.ExplorerAgentState.Active) { continue; }
-
-                        string v = _ownerAgent.ExplorerPositions[explorer];
-                        string[] t = v.Split();
-                        int x = Convert.ToInt32(t[0]);
-                        int y = Convert.ToInt32(t[1]);
-
-                        g.FillEllipse(Brushes.Blue, 20 + x * cellSize + 6, 20 + y * cellSize + 6, cellSize - 12, cellSize - 12);
+                        continue;
                     }
+
+                    string v = _ownerAgent.ExplorerPositions[explorer];
+                    string[] t = v.Split();
+                    int x = Convert.ToInt32(t[0]);
+                    int y = Convert.ToInt32(t[1]);
+
+                    // Draw explorer as a blue ellipse
+                    g.FillEllipse(Brushes.Blue, 20 + y * cellSize + 6, 20 + x * cellSize + 6, cellSize - 12, cellSize - 12);
                 }
             }
 
